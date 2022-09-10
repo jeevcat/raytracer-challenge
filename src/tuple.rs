@@ -1,23 +1,35 @@
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::ops::{Add, AddAssign, Div, Mul, Neg, Sub};
 
 use approx::relative_eq;
 
 #[derive(Debug)]
-struct Point {
-    x: f64,
-    y: f64,
-    z: f64,
+pub struct Point {
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
 }
 
 #[derive(Debug)]
-struct Vector {
-    x: f64,
-    y: f64,
-    z: f64,
+pub struct Vector {
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
 }
 
 #[derive(Debug, Clone, Copy)]
-struct Scalar(f64);
+pub struct Scalar(f64);
+
+impl Scalar {
+    pub fn new(value: f64) -> Self {
+        Self(value)
+    }
+}
+
+impl PartialOrd for Scalar {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.0.partial_cmp(&other.0)
+    }
+}
 
 impl PartialEq for Point {
     fn eq(&self, other: &Self) -> bool {
@@ -41,15 +53,67 @@ impl PartialEq for Scalar {
     }
 }
 
-impl Add<Vector> for Point {
-    type Output = Self;
+impl Add for Vector {
+    type Output = Vector;
 
-    fn add(self, rhs: Vector) -> Self::Output {
-        Self {
+    fn add(self, rhs: Self) -> Self::Output {
+        Vector {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
             z: self.z + rhs.z,
         }
+    }
+}
+
+impl Add for &Vector {
+    type Output = Vector;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Vector {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl Add<&Vector> for Vector {
+    type Output = Vector;
+
+    fn add(self, rhs: &Vector) -> Self::Output {
+        Vector {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl AddAssign for Vector {
+    fn add_assign(&mut self, rhs: Vector) {
+        self.x += rhs.x;
+        self.y += rhs.y;
+        self.z += rhs.z;
+    }
+}
+
+impl Add<Vector> for Point {
+    type Output = Point;
+
+    fn add(self, rhs: Vector) -> Self::Output {
+        Point {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl AddAssign<Vector> for Point {
+    fn add_assign(&mut self, rhs: Vector) {
+        self.x += rhs.x;
+        self.y += rhs.y;
+        self.z += rhs.z;
     }
 }
 
@@ -104,6 +168,18 @@ impl Neg for Vector {
 
 impl Mul<Scalar> for Vector {
     type Output = Self;
+
+    fn mul(self, rhs: Scalar) -> Self::Output {
+        Vector {
+            x: self.x * rhs.0,
+            y: self.y * rhs.0,
+            z: self.z * rhs.0,
+        }
+    }
+}
+
+impl Mul<Scalar> for &Vector {
+    type Output = Vector;
 
     fn mul(self, rhs: Scalar) -> Self::Output {
         Vector {

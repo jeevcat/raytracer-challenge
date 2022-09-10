@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 approx = "0.5"
+pixels = "0.9"
+winit = "0.27"
+winit_input_helper = "0.13"
