@@ -16,7 +16,7 @@ struct Vector {
     z: f64,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 struct Scalar(f64);
 
 impl PartialEq for Point {
@@ -139,6 +139,18 @@ impl Vector {
             z: self.z / mag,
         }
     }
+
+    pub fn dot(&self, rhs: &Self) -> Scalar {
+        Scalar(self.x * rhs.x + self.y * rhs.y + self.z * rhs.z)
+    }
+
+    pub fn cross(&self, rhs: &Self) -> Self {
+        Vector {
+            x: self.y * rhs.z - self.z * rhs.y,
+            y: self.z * rhs.x - self.x * rhs.z,
+            z: self.x * rhs.y - self.y * rhs.x,
+        }
+    }
 }
 
 #[cfg(test)]
@@ -166,7 +178,7 @@ mod tests {
                 y: 1.,
                 z: 6.,
             }
-        )
+        );
     }
 
     #[test]
@@ -189,7 +201,7 @@ mod tests {
                 y: -4.,
                 z: -6.,
             }
-        )
+        );
     }
 
     #[test]
@@ -212,7 +224,7 @@ mod tests {
                 y: -4.,
                 z: -6.,
             }
-        )
+        );
     }
 
     #[test]
@@ -235,7 +247,7 @@ mod tests {
                 y: -4.,
                 z: -6.,
             }
-        )
+        );
     }
 
     #[test]
@@ -258,7 +270,7 @@ mod tests {
                 y: 2.,
                 z: -3.,
             }
-        )
+        );
     }
 
     #[test]
@@ -276,7 +288,7 @@ mod tests {
                 y: 2.,
                 z: -3.,
             }
-        )
+        );
     }
 
     #[test]
@@ -293,7 +305,7 @@ mod tests {
                 y: -7.,
                 z: 10.5
             }
-        )
+        );
     }
 
     #[test]
@@ -310,7 +322,7 @@ mod tests {
                 y: -1.,
                 z: 1.5
             }
-        )
+        );
     }
 
     #[test]
@@ -327,7 +339,7 @@ mod tests {
                 y: -1.,
                 z: 1.5
             }
-        )
+        );
     }
 
     #[test]
@@ -389,7 +401,7 @@ mod tests {
             y: 2.,
             z: 3.,
         };
-            let norm = v.normalize();
+        let norm = v.normalize();
         assert_eq!(
             norm,
             Vector {
@@ -399,5 +411,50 @@ mod tests {
             }
         );
         assert_eq!(norm.magnitude(), Scalar(1.));
+    }
+
+    #[test]
+    fn dot_product_of_vectors() {
+        let a = Vector {
+            x: 1.,
+            y: 2.,
+            z: 3.,
+        };
+        let b = Vector {
+            x: 2.,
+            y: 3.,
+            z: 4.,
+        };
+        assert_eq!(a.dot(&b), Scalar(20.));
+    }
+
+    #[test]
+    fn cross_product_of_vectors() {
+        let a = Vector {
+            x: 1.,
+            y: 2.,
+            z: 3.,
+        };
+        let b = Vector {
+            x: 2.,
+            y: 3.,
+            z: 4.,
+        };
+        assert_eq!(
+            a.cross(&b),
+            Vector {
+                x: -1.,
+                y: 2.,
+                z: -1.
+            }
+        );
+        assert_eq!(
+            b.cross(&a),
+            Vector {
+                x: 1.,
+                y: -2.,
+                z: 1.
+            }
+        );
     }
 }
